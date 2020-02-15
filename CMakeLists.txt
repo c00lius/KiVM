@@ -77,6 +77,7 @@ find_package(FFI REQUIRED)
 include_directories(${FFI_INCLUDE_DIRS})
 link_libraries(${FFI_LIBRARIES})
 
+
 message(STATUS "libffi include: ${FFI_INCLUDE_DIRS}")
 message(STATUS "libffi libs: ${FFI_LIBRARIES}")
 
@@ -334,6 +335,14 @@ IF (UNIX)
         target_link_libraries(kivm ${FFI_LIBRARIES})
     endif ()
 ENDIF ()
+
+if (XCODE_LIBRARY_SEARCH_PATHS)
+	#link_directories(${FFI_LIBRARIES})
+	set_xcode_property(kivm LIBRARY_SEARCH_PATHS ${XCODE_LIBRARY_SEARCH_PATHS} "All")
+endif()
+
+#set_xcode_property(kivm ENABLE_BITCODE 0 "All")
+
 
 #### Executables
 add_executable(java src/bin/java.cpp include/bin/clipp.h)

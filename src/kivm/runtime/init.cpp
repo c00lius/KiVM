@@ -102,13 +102,19 @@ namespace kivm {
         }
 
         auto cl = BootstrapClassLoader::get();
-
+       
+        
         Threads::initializeVMStructs(cl, thread);
 
         use(cl, thread, J_STRING);
+
+        
+        
         auto threadClass = use(cl, thread, J_THREAD);
         auto threadGroupClass = use(cl, thread, J_THREAD_GROUP);
-
+        
+        
+        
         // Create the init thread
         JavaObject("Thread") initThreadOop = threadClass->newInstance();
         // eetop is a pointer to the underlying OS-level native thread instance of the JVM.
@@ -174,7 +180,30 @@ namespace kivm {
 
         // re-enable sun.security.util.Debug
         sunDebugClass->setClassState(ClassState::FULLY_INITIALIZED);
+        InstanceKlass* bscl = use(cl, thread, J_KiVMBSCL);
+        if (bscl != nullptr){
+            D("Found KiVMBootstrapClassLoader");
+            
+            JavaObject("KiVMBootstrapClassLoader") jcl = bscl->newInstance();
+            Method* constructor = bscl->getThisClassMethod(L"<init>", L"([Ljava/lang/String;)V");
+            
+            auto stringArrayClass = (ObjectArrayKlass *) BootstrapClassLoader::get()->loadClass(L"[Ljava/lang/String;");
+            
+            
+            
+            auto argumentArrayOop = stringArrayClass->newInstance((int) _arguments.size());
 
+            for (int i = 0; i < argumentArrayOop->getLength(); ++i) {
+                auto stringOop = java::lang::String::intern(_arguments[i]);
+                argumentArrayOop->setElementAt(i, stringOop);
+            }
+            
+            JavaCall::withArgs(thread, constructor, {jcl, argumentArrayOop});
+            
+            cl->jKiVMBootstrapClassloader = jcl;
+            
+        }
+        
         Global::jvmBooted = true;
     }
 

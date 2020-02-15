@@ -1,7 +1,9 @@
 JAVAC := javac
 
+JAVAC := /Library/Java/JavaVirtualMachines/jdk1.8.0_241.jdk/Contents/Home/bin/javac
+
 DIR := $(shell pwd)
-SRC := $(wildcard com/imkiva/kivm/*.java)
+SRC := $(shell find . -type f -name '*.java')
 OBJ := $(SRC:.java=.class)
 
 all: $(OBJ)
@@ -9,4 +11,4 @@ all: $(OBJ)
 
 %.class: %.java
 	@echo "[Compiling] $<"
-	@$(JAVAC) -d ../java-out -encoding utf-8 $<
+	@$(JAVAC) -d ../java-out -encoding utf-8  $<

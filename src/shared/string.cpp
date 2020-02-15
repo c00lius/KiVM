@@ -129,5 +129,9 @@ namespace kivm {
             results.push_back(string.substr(start));
             return results;
         }
+    
+    String copy(const String& str){
+        return str.substr();
+    }
     }
 }

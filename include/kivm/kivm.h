@@ -15,7 +15,8 @@
 #include <kivm/oop/oopfwd.h>
 
 #define KIVM_VERSION_STRING "1.0.1"
-
+#define KIVM_DEBUG
+//#define KIVM_CLASSPATH_DEBUG
 #ifdef KIVM_DEBUG
 #define D(fmt, ...) \
     do { \

@@ -64,11 +64,11 @@ namespace kivm {
             if (entry._source == ClassSource::DIR) {
                 filePathBuilder << entry._path
                                 << Global::PATH_SEPARATOR
-                                << className
+                                << fileName
                                 << Global::DOT
                                 << Global::CLASS_EXTENSION;
             } else if (entry._source == ClassSource::JAR) {
-                filePathBuilder << className
+                filePathBuilder << fileName
                                 << Global::DOT
                                 << Global::CLASS_EXTENSION;
             }

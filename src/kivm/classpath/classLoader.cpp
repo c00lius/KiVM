@@ -40,6 +40,7 @@ namespace kivm {
         return &classLoader;
     }
 
+
     Klass *BootstrapClassLoader::loadClass(const String &className) {
         RecursiveLockGuard guard(bootstrapLock());
 
@@ -55,6 +56,8 @@ namespace kivm {
             SystemDictionary::get()->put(className, klass);
             klass->setClassState(ClassState::LOADED);
             klass->linkClass();
+        } else {
+            D("Failed to load class %ls", className.c_str());
         }
         return klass;
     }

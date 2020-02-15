@@ -175,7 +175,12 @@ namespace kivm {
 
         inline pools::ClassPoolEntey getClass(int index) {
             assert(this->_rawPool != nullptr);
-            return _classPool.findOrNew(this, index);
+            pools::ClassPoolEntey e = _classPool.findOrNew(this, index);
+            //assert(e != NULL);
+            if (e == NULL){
+                D("Class at index %d not found", index);
+            }
+            return e;
         }
 
         inline pools::StringPoolEntry getString(int index) {

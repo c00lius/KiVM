@@ -43,6 +43,39 @@ namespace kivm {
                     return false;
                 }
             }
+            
+            
+            static HashMap<String, JavaObject("KiVMBootstrapClassLoader")> jarToClassLoader;
+            
+            BaseClassLoader* b = dynamic_cast<BootstrapClassLoader*>(klass->getClassLoader());
+            if (b != nullptr && b->jKiVMBootstrapClassloaderClass != nullptr) {
+                String jarFile = klass->getJarFile();
+                JavaObject("KiVMBootstrapClassLoader") jcl = nullptr;
+                auto it = jarToClassLoader.find(jarFile);
+                if (it != jarToClassLoader.end()){
+                    jcl = it->second;
+                }
+                 
+                if (jcl == nullptr){
+                    
+                    
+                    jcl = b->jKiVMBootstrapClassloaderClass->newInstance();
+                    Method* constructor = b->jKiVMBootstrapClassloaderClass->getThisClassMethod(L"<init>", L"(Ljava/lang/String;)V");
+                    JavaCall::withArgs(thread, constructor, {jcl, java::lang::String::intern(jarFile)});
+                    // recursion possible!
+                    // calling the constructor might result in another instantiation of a class loader
+                    // check if it was created and discard if neccessary
+                    it = jarToClassLoader.find(jarFile);
+                    if (it == jarToClassLoader.end()){
+                        jarToClassLoader[jarFile] = jcl;
+                    }
+                    
+                }
+                
+                    klass->setStaticFieldValue(L"java/lang/Class", L"classLoader", L"Ljava/lang/ClassLoader", (oop)jcl);
+                
+            }
+            
             klass->setClassState(ClassState::FULLY_INITIALIZED);
         }
         return true;

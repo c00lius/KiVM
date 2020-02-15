@@ -24,6 +24,7 @@ static bool isArrayRangeInvalid(jint srcPos, jint destPos, jint length,
 JAVA_NATIVE jobject
 Java_java_lang_System_initProperties(JNIEnv *env, jclass java_lang_System, jobject propertiesObject) {
     static HashMap<String, String> PROPS{
+        {L"resource.bundle.debug",L"true"},
         {L"java.vm.specification.version", L"1.8"},
         {L"path.separator", Global::PATH_SEPARATOR},
         {L"file.encoding.pkg", L"sun.io"},

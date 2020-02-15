@@ -34,6 +34,7 @@ namespace kivm {
         ClassFile *_classFile = nullptr;
         String _sourceFile;
         String _signature;
+        String _jarFile;
 
         InnerClasses_attribute *_innerClassAttr = nullptr;
         EnclosingMethod_attribute *_enclosingMethodAttr = nullptr;
@@ -107,6 +108,18 @@ namespace kivm {
             return _classLoader;
         }
 
+        inline const ClassFile* getClassFile() const {
+            return _classFile;
+        }
+        
+        inline const String getJarFile() const {
+            return _jarFile;
+        }
+        
+        inline void setJarFile(String jarFile) {
+            _jarFile = jarFile;
+        }
+        
         inline const String &getSourceFile() const {
             return _sourceFile;
         }

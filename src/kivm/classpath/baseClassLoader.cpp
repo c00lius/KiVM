@@ -10,6 +10,8 @@
 #include <kivm/classpath/classPathManager.h>
 
 namespace kivm {
+
+
     Klass *BaseClassLoader::loadClass(const String &className) {
         // Load array class
         if (className[0] == L'[') {
@@ -54,17 +56,22 @@ namespace kivm {
 
         // Load instance class
         ClassPathManager *cpm = ClassPathManager::get();
-        const auto &result = cpm->searchClass(className);
+        const ClassSearchResult &result = cpm->searchClass(className);
         if (result._source == ClassSource::NOT_FOUND) {
             return nullptr;
         }
-
+        
+        
+        
         ClassFileParser fileParser(result._file, result._buffer, result._bufferSize);
         ClassFile *classFile = fileParser.getParsedClassFile();
-        Klass *klass = classFile != nullptr
+        InstanceKlass *klass = classFile != nullptr
                        ? new InstanceKlass(classFile, this, nullptr, ClassType::INSTANCE_CLASS)
                        : nullptr;
+        klass->setJarFile(result._file);
+        
         result.closeResource();
+        
         return klass;
     }
 
@@ -75,8 +82,11 @@ namespace kivm {
 
         ClassFileParser fileParser(L"<stream>", classBytes, classSize);
         ClassFile *classFile = fileParser.getParsedClassFile();
-        return classFile != nullptr
-               ? new InstanceKlass(classFile, this, nullptr, ClassType::INSTANCE_CLASS)
-               : nullptr;
+        if (classFile == nullptr)
+            return nullptr;
+        
+        InstanceKlass* ik = new InstanceKlass(classFile, this, nullptr, ClassType::INSTANCE_CLASS);
+        
+        return ik;
     }
 }
